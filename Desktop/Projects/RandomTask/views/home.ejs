@@ -1,0 +1,13 @@
+
+<%-include("partials/header.ejs")-%>
+    <form action="/suggestion" method="post">
+        <textarea name="text" id="" cols="30" rows="10" placeholder="Input task"></textarea>
+        <button type="submit">Submit</button>
+    </form>
+
+    <form action="/Reveal" method="post">
+        <button type="submit">Reveal</button>
+    </form>
+
+    <p><%=event%></p>
+    <%-include("partials/footer.ejs")-%>
