@@ -5,11 +5,8 @@ const {schema,model}=require("./db")
       
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-const user1=new model({
-    userName:"Fazz12351",
-    password:"HelloKitty"
-})
-user1.save()
+
+
 
 app.get("/",async(req,res)=>{
     try{
@@ -47,5 +44,5 @@ app.get("/login",(req,res)=>{
 
 
 app.listen(3000,()=>{
-    console.log("server running")
+    console.log("server running on Port 3000")
 })

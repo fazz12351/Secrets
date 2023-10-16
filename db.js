@@ -1,10 +1,10 @@
 const { express, bodyParser, ejs, mongodb, mongoose,app } = require('./setup');
 
-const schema=new mongoose.Schema({
-    userName:String,
+const userSchema=new mongoose.Schema({
+    email:String,
     password:String
 })
-const model=new mongoose.model("user",schema)
+const userModel=new mongoose.model("User",userSchema)
 
-module.exports={schema,model}
+module.exports={userSchema,userModel}
 
