@@ -1,7 +1,7 @@
 //jshint esversion:6
 
 const { express, bodyParser, ejs, mongodb, mongoose,app } = require('./setup');
-const {schema,model}=require("./db")
+const {schema,model, userModel}=require("./db")
       
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,6 +19,8 @@ app.get("/",async(req,res)=>{
 
 })
 
+
+
 app.get("/register",async(req,res)=>{
     try{
         res.render("register",{
@@ -29,6 +31,21 @@ app.get("/register",async(req,res)=>{
     }
 })
 
+app.post("/register",async(req,res)=>{
+  
+    const newUser=new userModel({
+        username:req.body.username,
+        password:req.body.password 
+    })
+
+    newUser.save().then((err)=>{
+        res.render("secrets",{
+
+        })
+    })
+
+})
+
 app.get("/login",(req,res)=>{
     try{
         res.render("login",{
@@ -37,6 +54,30 @@ app.get("/login",(req,res)=>{
     catch(err){
         console.err(err)
     }
+})
+
+app.post("/login",async(req,res)=>{
+   const {username,password}=req.body;
+   try{
+    await userModel.find({username:username}).then((responce)=>{
+        if(responce.length>0){
+            if(responce[0].password===password){
+                console.log("Both credentials passwed")
+            }
+            else{
+                res.status(200).json({message:"Logged In"})
+            }
+        }
+        else{
+            res.status(400).json({message:"Couldnt find user in db"})
+        }
+    })
+
+   }
+   catch(err){
+    console.error(err)
+   }
+
 })
 
 
