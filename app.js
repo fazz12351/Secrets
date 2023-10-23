@@ -1,4 +1,5 @@
 //jshint esversion:6
+const md5=require("md5")
 const { express, bodyParser, ejs, mongodb, mongoose,app,encrypt } = require('./setup');
 const {schema,model, userModel}=require("./db")
       
@@ -34,7 +35,7 @@ app.post("/register",async(req,res)=>{
   
     const newUser=new userModel({
         username:req.body.username,
-        password:req.body.password 
+        password:md5(req.body.password) 
     })
 
     newUser.save().then((err)=>{
@@ -60,7 +61,8 @@ app.post("/login",async(req,res)=>{
    try{
     await userModel.find({username:username}).then((responce)=>{
         if(responce.length>0){
-            if(responce[0].password===password){
+            const hashedPassword=md5(password)
+            if(responce[0].password===hashedPassword){
                 res.render("secrets",{
 
                 })
@@ -88,3 +90,5 @@ app.post("/login",async(req,res)=>{
 app.listen(3000,()=>{
     console.log("server running on Port 3000")
 })
+
+console.log(md5("Naeem"))
