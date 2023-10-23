@@ -1,6 +1,6 @@
 //jshint esversion:6
 
-const { express, bodyParser, ejs, mongodb, mongoose,app } = require('./setup');
+const { express, bodyParser, ejs, mongodb, mongoose,app,encrypt } = require('./setup');
 const {schema,model, userModel}=require("./db")
       
 app.set("view engine", "ejs");
@@ -62,10 +62,12 @@ app.post("/login",async(req,res)=>{
     await userModel.find({username:username}).then((responce)=>{
         if(responce.length>0){
             if(responce[0].password===password){
-                console.log("Both credentials passwed")
+                res.render("secrets",{
+
+                })
             }
             else{
-                res.status(200).json({message:"Logged In"})
+                res.status(200).json({message:"password is wrong"})
             }
         }
         else{
