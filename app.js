@@ -1,5 +1,4 @@
 //jshint esversion:6
-
 const { express, bodyParser, ejs, mongodb, mongoose,app,encrypt } = require('./setup');
 const {schema,model, userModel}=require("./db")
       
