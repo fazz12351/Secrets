@@ -1,94 +1,90 @@
-//jshint esversion:6
-const md5=require("md5")
-const { express, bodyParser, ejs, mongodb, mongoose,app,encrypt } = require('./setup');
-const {schema,model, userModel}=require("./db")
-      
+
+const express = require('express');
+const app = express();
+const passport = require('passport');
+const session = require('express-session');
+// ...
+
+app.use(session({
+  secret: 'Wagwaaannn People',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+const {bodyParser,ejs,mongodb,mongoose,encrypt,} = require("./setup");
+const { schema, model, User } = require("./db");
+
+
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+app.get("/", async (req, res) => {
+  try {
+    res.render("home", {});
+  } catch (err) {
+    console.error(err);
+  }
+});
 
-app.get("/",async(req,res)=>{
-    try{
-        res.render("home",{
+app.get("/register", async (req, res) => {
+  try {
+    res.render("register", {});
+  } catch (err) {
+    console.err(err);
+  }
+});
 
-        })
-    }catch(err){
-        console.error(err)
+
+app.post("/register", async (req, res) => {
+  User.register({username:req.body.username},req.body.password,(err,user)=>{
+    if(err){
+      console.log("error")
+      res.redirect("/register")
+    }
+    else{
+      passport.authenticate("local")(req,res,()=>{
+        res.redirect("/secrets")
+      })
+
     }
 
-})
 
 
 
-app.get("/register",async(req,res)=>{
-    try{
-        res.render("register",{
-        })
-    }
-    catch(err){
-        console.err(err)
-    }
-})
+  })
 
-app.post("/register",async(req,res)=>{
-  
-    const newUser=new userModel({
-        username:req.body.username,
-        password:md5(req.body.password) 
+});
+
+app.get("/secrets",(req,res)=>{
+
+  if(req.isAuthenticated()){
+    res.render("secrets",{
+
     })
-
-    newUser.save().then((err)=>{
-        res.render("secrets",{
-
-        })
-    })
-
+  }
+  else{
+    res.redirect("/login")
+  }
 })
 
-app.get("/login",(req,res)=>{
-    try{
-        res.render("login",{
-        })
-    }
-    catch(err){
-        console.err(err)
-    }
-})
+app.get("/login", (req, res) => {
+  try {
+    res.render("login", {});
+  } catch (err) {
+    console.err(err);
+  }
+});
 
-app.post("/login",async(req,res)=>{
-   const {username,password}=req.body;
-   try{
-    await userModel.find({username:username}).then((responce)=>{
-        if(responce.length>0){
-            const hashedPassword=md5(password)
-            if(responce[0].password===hashedPassword){
-                res.render("secrets",{
+app.post("/login", async (req, res) => {
 
-                })
-            }
-            else{
-                res.status(200).json({message:"password is wrong"})
-            }
-        }
-        else{
-            res.status(400).json({message:"Couldnt find user in db"})
-        }
-    })
+});
 
-   }
-   catch(err){
-    console.error(err)
-   }
-
-})
+app.listen(3000, () => {
+  console.log("server running on Port 3000");
+});
 
 
-
-
-
-app.listen(3000,()=>{
-    console.log("server running on Port 3000")
-})
-
-console.log(md5("Naeem"))
