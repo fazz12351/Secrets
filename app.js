@@ -6,7 +6,7 @@ const session = require('express-session');
 // ...
 
 app.use(session({
-  secret: 'Wagwaaannn People',
+  secret: "Wagwaaannn People",
   resave: false,
   saveUninitialized: false
 }));
@@ -51,10 +51,6 @@ app.post("/register", async (req, res) => {
       })
 
     }
-
-
-
-
   })
 
 });
@@ -63,7 +59,6 @@ app.get("/secrets",(req,res)=>{
 
   if(req.isAuthenticated()){
     res.render("secrets",{
-
     })
   }
   else{
@@ -79,7 +74,24 @@ app.get("/login", (req, res) => {
   }
 });
 
+
+
 app.post("/login", async (req, res) => {
+  const user=new User({
+    username:req.body.username,
+    password:req.body.passport
+  })
+
+  req.login(user,(err)=>{
+    if(err){
+      console.log(err)
+    }
+    else{
+      passport.authenticate("local")(req,res,()=>{
+        res.redirect("/secrets")
+      })
+    }
+  })
 
 });
 
@@ -87,4 +99,10 @@ app.listen(3000, () => {
   console.log("server running on Port 3000");
 });
 
-
+app.get("/logout",(req,res)=>{
+  req.logout(()=>{
+    console.log("logged out")
+  })
+  
+  res.redirect("/")
+})
