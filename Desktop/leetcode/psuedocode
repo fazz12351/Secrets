@@ -1,0 +1,79 @@
+# Create an empty object to store transactions
+let transactions = {}
+
+    # Function to add a bill to the transactions
+    function addBill(user1, user2, amount):
+        # If user1 is not in transactions, set their balance to 0
+        if user1 not in transactions:
+            transactions[user1] = 0
+        # If user2 is not in transactions, set their balance to 0
+        if user2 not in transactions:
+            transactions[user2] = 0
+    
+        # Subtract the amount from user1's balance
+        transactions[user1] -= amount
+        # Add the amount to user2's balance
+        transactions[user2] += amount
+    
+    # Function to settle debts based on the balances in the transactions
+    function settleDebts(inputTransactions):
+        # Validate input
+        if inputTransactions is not an object:
+            throw new Error('Input must be an object');
+    
+        # Convert the inputTransactions entries to an array of balances
+        balances = []
+        for each entry in inputTransactions:
+            if entry.value !== 0:
+                balances.push({ name: entry.key, amount: entry.value })
+    
+        # Separate positive and negative balances
+        positiveBalances = filter balances where amount > 0
+        negativeBalances = filter balances where amount < 0
+    
+    
+        # Sort the arrays based on the amounts
+        sort positiveBalances by descending amount
+        sort negativeBalances by ascending amount
+    
+        # Initialize result array to store settlements
+        settlements = []
+    
+        # Iterate over positive balances and settle debts
+        for each positiveEntry in positiveBalances:
+            remainingAmount = positiveEntry.amount
+    
+            # Iterate over negative balances to settle debts
+            for each negativeEntry in negativeBalances:
+                # Check if there is any more debt to settle
+                if remainingAmount === 0:
+                    break  # No more debt to settle
+    
+                # Calculate the payment amount, considering the minimum of owed amount and remaining amount
+                payment = minimum of -negativeEntry.amount and remainingAmount
+    
+                # Only record settlements with positive amounts
+                if payment > 0:
+                    settlements.push({
+                        from: positiveEntry.name,
+                        to: negativeEntry.name,
+                        amount: payment
+                    })
+    
+                remainingAmount -= payment
+                negativeEntry.amount += payment
+    
+        return settlements
+    
+    # Add bills to the transactions
+    addBill("Jan", "Piet", 50)
+    addBill("Henk", "Piet", 60)
+    addBill("Henk", "Ingrid", 50)
+    addBill("Kenk", "Ingrid", 40)
+    
+    # Display settlements for the transactions
+    print(settleDebts(transactions))
+    
+    # Display settlements for the transactions again
+    print(settleDebts(transactions))
+    
